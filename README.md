@@ -1,13 +1,9 @@
-# express-crud
+// To turn on back end server
 
-```
-yarn
-node app.js
-```
+- CD Backend
+- npm install
+- node app.js
 
+// you can just run front end with liveserver of index.html
 
-## Required ngrok
-
-```
-ngrok http 3333
-```
+// challange your students with finishing the updateCar function

@@ -19,11 +19,27 @@ let cars = [
     imageUrl:
       "https://upload.wikimedia.org/wikipedia/commons/0/01/2009_Toyota_Prius_%28ZVW30R%29_liftback_%282011-12-06%29_01.jpg",
   },
+  {
+    id: 2,
+    model: "Prius 40",
+    brand: "Toyota",
+    price: 13_000_000.0,
+    imageUrl:
+      "https://upload.wikimedia.org/wikipedia/commons/0/01/2009_Toyota_Prius_%28ZVW30R%29_liftback_%282011-12-06%29_01.jpg",
+  },
+  {
+    id: 3,
+    model: "Prius 41",
+    brand: "Toyota",
+    price: 15_000_000.0,
+    imageUrl:
+      "https://upload.wikimedia.org/wikipedia/commons/0/01/2009_Toyota_Prius_%28ZVW30R%29_liftback_%282011-12-06%29_01.jpg",
+  },
 ];
 let index = cars.length;
 
 const app = express();
-
+app.use(bodyParser.json());
 app.use(cors());
 
 app.get("/api/cars", (req, res) => {
@@ -39,7 +55,7 @@ app.get("/api/cars/:id", (req, res) => {
   }
 });
 
-app.post("/api/cars", bodyParser.json(), (req, res) => {
+app.post("/api/cars", (req, res) => {
   const car = { id: index, ...req.body };
   index++;
   cars.push(car);
@@ -58,7 +74,8 @@ app.put("/api/cars", bodyParser.json(), (req, res) => {
   }
 });
 
-app.delete("/api/cars", bodyParser.json(), (req, res) => {
+app.delete("/api/cars", (req, res) => {
+  console.log("delete");
   cars = cars.filter((car) => car.id !== Number(req.body.id));
   res.send(`Car with given id: ${req.body.id} deleted successfully`);
 });
