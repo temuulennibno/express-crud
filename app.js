@@ -64,11 +64,22 @@ app.get("/api/cars/:id", (req, res) => {
 });
 
 app.post("/api/cars", bodyParser.json(), (req, res) => {
-  console.log(req.body);
   const car = { id: index, ...req.body };
   index++;
   cars.push(car);
   res.send(car);
+});
+
+app.put("/api/cars", bodyParser.json(), (req, res) => {
+  const { id, model, brand } = req.body;
+  const index = cars.findIndex((car) => car.id === id);
+  if (index === -1) {
+    res.send("Car not found");
+  } else {
+    const car = { id, model, brand };
+    cars[index] = car;
+    res.send(car);
+  }
 });
 
 app.delete("/api/cars", bodyParser.json(), (req, res) => {

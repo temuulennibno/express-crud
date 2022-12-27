@@ -19,6 +19,17 @@ content-type: application/json
 
 ###
 
+PUT http://localhost:3333/api/cars HTTP/1.1
+content-type: application/json
+
+{
+    "id": 2,
+    "model": "Kluger",
+    "brand": "Toyota"
+}
+
+###
+
 DELETE http://localhost:3333/api/cars HTTP/1.1
 content-type: application/json
 
