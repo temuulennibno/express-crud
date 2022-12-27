@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 
 let cars = [
   {
@@ -45,6 +46,8 @@ let cars = [
 let index = cars.length;
 
 const app = express();
+
+app.use(cors());
 
 app.get("/api/cars", (req, res) => {
   res.send(cars);
