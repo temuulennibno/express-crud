@@ -7,41 +7,17 @@ let cars = [
     id: 0,
     model: "Prius 20",
     brand: "Toyota",
+    price: 10_000_000.0,
+    imageUrl:
+      "https://upload.wikimedia.org/wikipedia/commons/2/2b/2nd_Toyota_Prius.jpg",
   },
   {
     id: 1,
     model: "Prius 30",
     brand: "Toyota",
-  },
-  {
-    id: 2,
-    model: "Prius Alpha",
-    brand: "Toyota",
-  },
-  {
-    id: 3,
-    model: "Aqua",
-    brand: "Toyota",
-  },
-  {
-    id: 4,
-    model: "Prius 10",
-    brand: "Toyota",
-  },
-  {
-    id: 5,
-    model: "RX 450",
-    brand: "Lexus",
-  },
-  {
-    id: 6,
-    model: "RX 350",
-    brand: "Lexus",
-  },
-  {
-    id: 7,
-    model: "HS 250",
-    brand: "Lexus",
+    price: 12_000_000.0,
+    imageUrl:
+      "https://upload.wikimedia.org/wikipedia/commons/0/01/2009_Toyota_Prius_%28ZVW30R%29_liftback_%282011-12-06%29_01.jpg",
   },
 ];
 let index = cars.length;
@@ -71,12 +47,12 @@ app.post("/api/cars", bodyParser.json(), (req, res) => {
 });
 
 app.put("/api/cars", bodyParser.json(), (req, res) => {
-  const { id, model, brand } = req.body;
+  const { id, model, brand, price, imageUrl } = req.body;
   const index = cars.findIndex((car) => car.id === id);
   if (index === -1) {
     res.send("Car not found");
   } else {
-    const car = { id, model, brand };
+    const car = { id, model, brand, price, imageUrl };
     cars[index] = car;
     res.send(car);
   }
