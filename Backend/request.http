@@ -36,3 +36,23 @@ content-type: application/json
 {
     "id": 0
 }
+
+###
+POST http://localhost:3333/api/signup HTTP/1.1
+content-type: application/json
+
+{
+    "email": "temka@temka.mn",
+    "password": "Temka1234.",
+    "repassword": "Temka1234."
+}
+
+
+###
+POST http://localhost:3333/api/signin HTTP/1.1
+content-type: application/json
+
+{
+    "email": "temka@temka.mn",
+    "password": "Temka1234."
+}

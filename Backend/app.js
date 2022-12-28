@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
-const nanoid = require("nanoid");
+const shortid = require("shortid");
 
 let cars = [
   {
@@ -86,35 +86,39 @@ let usersIndex = users.length;
 
 /**
  * Regex that must contain at least one capital and one
- * lower letter and any of this @$!%*#?& special characters
+ * lower letter and any of this @$!%*#?&. special characters
  * and number
  */
 const passwordRegex =
-  /^(?=.*[A-Z])(?=.*[a-z])(?=.*d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+  /^(?=.*[a-z])(?=.*[A-Z])(?=.*[@$!%*#?&.])(?=.*\d)[a-zA-Z@$!%*#?&.\d]{8,}$/;
 const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
-app.post("/api/login", bodyParser.json(), (req, res) => {
+app.post("/api/signin", bodyParser.json(), (req, res) => {
   const { email, password } = req.body;
 
+  console.log(users);
+  console.log(email, password);
   const index = users.findIndex(
     (user) => user.email === email && user.password === password
   );
   if (index === -1) {
-    res
-      .status(400)
-      .send({ message: "Email and password doesn't match", body: null });
+    res.status(400);
+    res.send({ message: "Email and password doesn't match", body: null });
   } else {
-    const token = nanoid();
+    const token = shortid.generate();
     users[index].tokenExpires = new Date(Date.now() + 1000 * 60 * 10);
     users[index].token = token;
-    res.status(200).send(token);
+    res.status(200);
+    res.send({ message: "Success", body: token });
   }
 });
 
 app.post("/api/signup", bodyParser.json(), (req, res) => {
   const { email, password, repassword } = req.body;
+  console.log("Received");
   if (password !== repassword) {
-    res.code(400).send({ message: "Password doesn't match", body: null });
+    res.status(400);
+    res.send({ message: "Password doesn't match", body: null });
   } else {
     if (passwordRegex.test(password)) {
       if (emailRegex.test(email)) {
@@ -124,41 +128,45 @@ app.post("/api/signup", bodyParser.json(), (req, res) => {
             id: usersIndex,
             email,
             password,
-            token,
+            token: shortid.generate(),
             tokenExpires: new Date(Date.now() + 1000 * 60 * 10),
           };
-          users.push(user);
+          users[usersIndex] = user;
           usersIndex++;
-          res.send(200).send({ message: "Signup success", body: user });
+          res.send({ message: "Signup success", body: user });
         } else {
-          res.code(400).send({ message: "Email already exists", body: null });
+          res.status(400);
+          res.send({ message: "Email already exists", body: null });
         }
       } else {
-        res.code(400).send({ message: "Email invalid", body: null });
+        res.status(400);
+        res.send({ message: "Email invalid", body: null });
       }
     } else {
-      res
-        .code(400)
-        .send({ message: "Password requirement invalid", body: null });
+      res.status(400);
+      res.send({ message: "Password requirement invalid", body: null });
     }
   }
 });
 app.get("/api/me", (req, res) => {
-  const authorization = req.headers;
+  const authorization = req.headers.authorization;
   if (!authorization) {
-    res.code(400).send({ message: "Auth token not found", body: null });
+    res.status(400);
+    res.send({ message: "Auth token not found", body: null });
   } else {
     const filteredUsers = users.filter((user) => user.token === authorization);
     let user;
     if (filteredUsers.length > 0) {
       user = filteredUsers[0];
       if (new Date() - future.getTime() > 0) {
-        res.code(403).send({ message: "Not authorized", body: null });
+        res.status(403);
+        res.send({ message: "Not authorized", body: null });
       } else {
         res.send({ message: "success", body: user });
       }
     } else {
-      res.code(400).send({ message: "User not found", body: null });
+      res.status(400);
+      res.send({ message: "User not found", body: null });
     }
   }
 });
