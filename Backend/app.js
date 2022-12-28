@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
+const nanoid = require("nanoid");
 
 let cars = [
   {
@@ -77,7 +78,89 @@ app.put("/api/cars", bodyParser.json(), (req, res) => {
 app.delete("/api/cars", (req, res) => {
   console.log("delete");
   cars = cars.filter((car) => car.id !== Number(req.body.id));
-  res.send(`Car with given id: ${req.body.id} deleted successfully`);
+  res.send({ message: "Deleted" });
+});
+
+const users = [];
+let usersIndex = users.length;
+
+/**
+ * Regex that must contain at least one capital and one
+ * lower letter and any of this @$!%*#?& special characters
+ * and number
+ */
+const passwordRegex =
+  /^(?=.*[A-Z])(?=.*[a-z])(?=.*d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
+const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+
+app.post("/api/login", bodyParser.json(), (req, res) => {
+  const { email, password } = req.body;
+
+  const index = users.findIndex(
+    (user) => user.email === email && user.password === password
+  );
+  if (index === -1) {
+    res
+      .status(400)
+      .send({ message: "Email and password doesn't match", body: null });
+  } else {
+    const token = nanoid();
+    users[index].tokenExpires = new Date(Date.now() + 1000 * 60 * 10);
+    users[index].token = token;
+    res.status(200).send(token);
+  }
+});
+
+app.post("/api/signup", bodyParser.json(), (req, res) => {
+  const { email, password, repassword } = req.body;
+  if (password !== repassword) {
+    res.code(400).send({ message: "Password doesn't match", body: null });
+  } else {
+    if (passwordRegex.test(password)) {
+      if (emailRegex.test(email)) {
+        const emailIndex = users.findIndex((user) => user.email === email);
+        if (emailIndex === -1) {
+          const user = {
+            id: usersIndex,
+            email,
+            password,
+            token,
+            tokenExpires: new Date(Date.now() + 1000 * 60 * 10),
+          };
+          users.push(user);
+          usersIndex++;
+          res.send(200).send({ message: "Signup success", body: user });
+        } else {
+          res.code(400).send({ message: "Email already exists", body: null });
+        }
+      } else {
+        res.code(400).send({ message: "Email invalid", body: null });
+      }
+    } else {
+      res
+        .code(400)
+        .send({ message: "Password requirement invalid", body: null });
+    }
+  }
+});
+app.get("/api/me", (req, res) => {
+  const authorization = req.headers;
+  if (!authorization) {
+    res.code(400).send({ message: "Auth token not found", body: null });
+  } else {
+    const filteredUsers = users.filter((user) => user.token === authorization);
+    let user;
+    if (filteredUsers.length > 0) {
+      user = filteredUsers[0];
+      if (new Date() - future.getTime() > 0) {
+        res.code(403).send({ message: "Not authorized", body: null });
+      } else {
+        res.send({ message: "success", body: user });
+      }
+    } else {
+      res.code(400).send({ message: "User not found", body: null });
+    }
+  }
 });
 
 const port = process.env.port || 3333;
