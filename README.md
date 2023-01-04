@@ -1,8 +1,8 @@
 // To turn on back end server
 
-- CD Backend
-- npm install
-- node app.js
+- ```cd Backend```
+- ```npm install```
+- ```npm start```
 
 // you can just run front end with liveserver of index.html
 
