@@ -148,6 +148,7 @@ app.post("/api/signup", bodyParser.json(), (req, res) => {
     }
   }
 });
+
 app.get("/api/me", (req, res) => {
   const authorization = req.headers.authorization;
   if (!authorization) {
